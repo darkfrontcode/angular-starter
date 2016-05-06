@@ -1,0 +1,16 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <td><b>Name:</b></td>
+            <td><b>Job:</b></td>
+            <td><i class="glyphicon glyphicon-plus-sign" aria-hidden="true"></i></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="person in team">
+            <td>{{person.name}}</td>
+            <td>{{person.job}}</td>
+            <td><i class="glyphicon glyphicon-edit" aria-hidden="true"></i></td>
+        </tr>
+    </tbody>
+</table>
