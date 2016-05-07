@@ -3,14 +3,16 @@
         <tr>
             <td><b>Name:</b></td>
             <td><b>Job:</b></td>
-            <td><i class="glyphicon glyphicon-plus-sign" aria-hidden="true"></i></td>
+            <td><b>Edit:</b></td>
+            <td><b>Delete:</b></td>
         </tr>
     </thead>
     <tbody>
         <tr ng-repeat="person in team">
             <td>{{person.name}}</td>
             <td>{{person.job}}</td>
-            <td><i class="glyphicon glyphicon-edit" aria-hidden="true"></i></td>
+            <td><a ui-sref="edit({id: person.id})"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i></a></td>
+            <td><a ng-click="delete(person.id)"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i></a></td>
         </tr>
     </tbody>
 </table>

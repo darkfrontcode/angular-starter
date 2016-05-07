@@ -1,27 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <title>Angular Starter</title>
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.css" media="screen" charset="utf-8">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="css/main.css">
     <script type="text/javascript" src="lib/angular/angular.js"></script>
     <script type="text/javascript" src="lib/angular-ui-router/angular-ui-router.min.js"></script>
 </head>
 <body>
 
     <div ng-app="app" ng-controller="AppCtrl">
-        <a href="index.html">
-            <h2>Enterprise Team</h2>
-        </a>
-
-        <nav>
-            <ul>
-                <li>
-                    <a ui-sref="team">List team</a>
-                </li>
-            </ul>
-        </nav>
-
+        <header>
+            <a href="index.html">
+                <h2>Enterprise Team</h2>
+            </a>
+            <a ui-sref="new" class="add">Add new person <i class="glyphicon glyphicon-plus-sign" aria-hidden="true"></i></a>
+        </header>
         <div ui-view></div>
     </div>
 
