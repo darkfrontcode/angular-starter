@@ -1,3 +1,4 @@
+// prevent undefined variable and stuff's
 "use strict";
 
 //create app
@@ -27,76 +28,100 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
         });
 });
 
-app.factory('store', ['$rootScope', function ($rootScope) {
+app.factory('actions', ['$rootScope', function ($rootScope) {
     var actions = {
+        getStore: function(){
+            return JSON.parse(localStorage.getItem("enterprise"));
+        },
+        saveStore(newStore){
+            localStorage.setItem("enterprise", JSON.stringify(newStore));
+        },
         add: function(person){
 
+            //get store from localStorage
+            var storage = this.getStore();
+
             //clone store team for push purpose
-            var clone = this.team.reduce(function(all, item, index){
+            var newTeam = storage.reduce(function(all, item, index){
                 all.push(item);
                 return all;
             }, []);
 
             //push new person to clone array
-            clone.push(person);
+            newTeam.push(person);
 
-            //return new clone array with new person icluded
-            return clone;
+            //set new array to localStorage
+            this.saveStore(newTeam);
+
+            //set state and refresh
+            this.state = newTeam;
+            this.refresh();
         },
         edit: function(person){
 
-            //search person
-            var newTeam = this.team.reduce(function(all, item, index){
+            //get store
+            var storage = this.getStore();
+
+            //search person in store
+            var newTeam = storage.reduce(function(all, item, index){
                 if(item.id==person.id) all.push(person);
                 else all.push(item);
                 return all;
             }, []);
 
-            //delivery newTeam
-            return newTeam;
+            //set new array to localStorage
+            this.saveStore(newTeam);
+
+            //set state and refresh
+            this.state = newTeam;
+            this.refresh();
         },
         delete: function(id){
 
-            //clone team without exlude person id
-            var newTeam = this.team.reduce(function(all, item, index){
+            //get store
+            var storage = this.getStore();
+
+            //clone team without exlude person
+            var newTeam = storage.reduce(function(all, item, index){
                 if(item.id!=id) all.push(item)
                 return all
             }, []);
 
-            //delivery newTeam
-            return newTeam;
+            //set new array to localStorage
+            this.saveStore(newTeam);
+
+            //set state and refresh
+            this.state = newTeam;
+            this.refresh();
         },
-        refresh: function(newTeam){
-            this.team = newTeam;
+        refresh: function(){
             $rootScope.$broadcast('refresh');
         },
-        team:null
+        state: []
     };
 
+    //delivery actions
     return actions;
 }]);
 
-app.controller('teamCtrl', ['$scope','store', function($scope, store){
+app.controller('teamCtrl', ['$scope','actions', function($scope, actions){
 
-    //delete function
+    //delete action
     $scope.delete = function(id){
-
-        //store.action delete
-        var newTeam = store.delete(id);
-
-        //refresh and broadcast data for all controllers
-        store.refresh(newTeam);
-        $scope.$on('refresh', function(){
-            $scope.team = store.team;
-        });
+        
+        //call delete action
+        actions.delete(id);
     }
 
 }]);
 
-app.controller('editCtrl', ['$scope', '$location', '$stateParams', 'store', function($scope, $location, $stateParams, store){
+app.controller('editCtrl', ['$scope', '$location', '$stateParams', 'actions', function($scope, $location, $stateParams, actions){
 
-    //search for person id in store.team
-    var person = store.team.reduce(function(all, item, index){
+    //get store
+    var store = actions.getStore();
+
+    //search for person id in store
+    var person = store.reduce(function(all, item, index){
         if(item.id==$stateParams.id) return item
         return all;
     }, {});
@@ -107,14 +132,8 @@ app.controller('editCtrl', ['$scope', '$location', '$stateParams', 'store', func
     //save new person
     $scope.save = function(){
 
-        //get add action from store.actions
-        var newTeam = store.edit($scope.person);
-
-        //refresh and broadcast data for all controllers
-        store.refresh(newTeam);
-        $scope.$on('refresh', function(){
-            $scope.team = store.team;
-        });
+        //get add action from actions.actions
+        actions.edit($scope.person);
 
         //redirect page to index
         $location.path('/');
@@ -122,43 +141,61 @@ app.controller('editCtrl', ['$scope', '$location', '$stateParams', 'store', func
 
 }]);
 
-app.controller('newCtrl', ['$scope', '$location', 'store', function($scope, $location, store){
+app.controller('newCtrl', ['$scope', '$location', 'actions', function($scope, $location, actions){
 
-    //search last index in store.team
-    var last_index = store.team.reduce(function(all, item, index){
-        if(index==store.team.length-1) return item;
+    //get store
+    var store = actions.state;
+
+    //search last index of store
+    var last_index = store.reduce(function(all, item, index){
+        if(index==store.length-1) return item;
         else return all;
     }, []);
 
-    //get last index id and plus 1 for unique id
+    //get id and plus 1 for unique id
     var id = last_index.id+1;
     $scope.person = {id: id, name: "", job: ""}
 
     //save function
     $scope.save = function(){
 
-        //get add action from store.actions
-        var newTeam = store.add($scope.person);
-
-        //refresh and broadcast data for all controllers
-        store.refresh(newTeam);
-        $scope.$on('refresh', function(){
-            $scope.team = store.team;
-        });
+        //save new person
+        actions.add($scope.person);
 
         //redirect page to index
         $location.path('/');
     }
 }]);
 
-app.controller('AppCtrl', ['$scope','store',function($scope, store) {
+app.controller('AppCtrl', ['$scope','actions', function($scope, actions) {
 
     //promisses arrays
     var promisses=[],
         paths=[
             'resources/names.json',
             'resources/jobs.json'
-        ];
+        ],
+        storage = actions.getStore();
+
+    if(storage){
+        //delivery data
+        actions.state = storage;
+        $scope.team = actions.state;
+        console.log('Delivery from "Enterprise" localStorage.');
+    }else{
+        request_data();
+        console.log('Creating a "Enterprise" localStorage.');
+    }
+
+    //restore function
+    $scope.restore = function(){
+        request_data(true);
+    }
+
+    //refresh and broadcast data for controller
+    $scope.$on('refresh', function(){
+        $scope.team = actions.state;
+    });
 
     //defferd function of jquery
     function request(path){
@@ -180,7 +217,7 @@ app.controller('AppCtrl', ['$scope','store',function($scope, store) {
     }
 
     //loop for array path and get his reponses with promisses and Deferred
-    function request_data(force){
+    function request_data(update){
 
         //reset array
         if(promisses.length>0) promisses.length=0;
@@ -198,7 +235,7 @@ app.controller('AppCtrl', ['$scope','store',function($scope, store) {
             //organize array
             var data = {names: a.names, jobs: b.jobs};
 
-            //get a + b and crate a news array for delivery to AppCtrl
+            //get a + b and crate a new array for delivery to AppCtrl
             var newTeam = data.names.reduce(function(all, item, index){
                 all.push({
                     id: index+1,
@@ -208,29 +245,15 @@ app.controller('AppCtrl', ['$scope','store',function($scope, store) {
                 return all;
             }, []);
 
-            //refresh and broadcast data for all controllers
-            store.refresh(newTeam);
-            $scope.$on('refresh', function(){
-                $scope.team = store.team;
-            });
+            //create localStorage with delivered data
+            localStorage.setItem("enterprise", JSON.stringify(newTeam));
 
-            //force-update current controller
-            if(force) $scope.$digest();
+            //delivery data
+            actions.state = newTeam;
+            $scope.team = actions.state;
+
+            if(update) $scope.$digest();
         });
-    }
-
-    //execute funcion
-    request_data();
-
-    //refresh and broadcast data for all controllers
-    $scope.team = store.team;
-    $scope.$on('refresh', function(){
-        $scope.team = store.team;
-    });
-
-    //restore function
-    $scope.restore = function(event){
-        request_data(true);
     }
 
 }]);
