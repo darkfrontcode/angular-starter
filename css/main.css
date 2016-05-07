@@ -20,3 +20,31 @@
     header .add{
         text-decoration: underline;
     }
+
+    form fieldset.form-group{
+        margin-bottom: 0;
+    }
+
+    .loading .well{
+        width: auto;
+        text-align: center;
+        margin: 0 auto;
+        display: table;
+        padding: 10px;
+    }
+
+    .loading .well i,
+    .loading .well span{
+        color: #337ab7;
+        font-size: 20px;
+        line-height: 20px;
+        float: left;
+    }
+
+    .loading .well i{
+        margin-right: 10px;
+    }
+
+    .loading .well span{
+        font-size: 14px;
+    }

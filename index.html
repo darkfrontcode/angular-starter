@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/main.css">
     <script type="text/javascript" src="lib/angular/angular.js"></script>
     <script type="text/javascript" src="lib/angular-ui-router/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="lib/jquery/jquery-1.12.3.min.js"></script>
 </head>
 <body>
 
@@ -15,7 +16,9 @@
             <a href="index.html">
                 <h2>Enterprise Team</h2>
             </a>
-            <a ui-sref="new" class="add">Add new person <i class="glyphicon glyphicon-plus-sign" aria-hidden="true"></i></a>
+            <div ng-if="team.length!=0">
+                <a ui-sref="new" class="add">Add new person <i class="glyphicon glyphicon-plus-sign" aria-hidden="true"></i></a>
+            </div>
         </header>
         <div ui-view></div>
     </div>

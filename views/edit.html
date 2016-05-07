@@ -1,5 +1,32 @@
 <form>
-    <input ng-model="person.name" placeholder="Enter name">
-    <input ng-model="person.job" placeholder="Set a job">
-    <button ng-click="save()" class="btn btn-primary">Save</button>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td><b>ID:</b></td>
+                <td><b>Name:</b></td>
+                <td><b>Job:</b></td>
+                <td><b>Save:</b></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <fieldset class="form-group">
+                        <input type="text" ng-model="person.id" value="{{person.id}}" class="form-control"  placeholder="Enter email" disabled>
+                    </fieldset>
+                </td>
+                <td>
+                    <fieldset class="form-group">
+                        <input type="text" ng-model="person.name" placeholder="Type a name" class="form-control">
+                    </fieldset>
+                </td>
+                <td>
+                    <fieldset class="form-group">
+                        <input type="text" ng-model="person.job" placeholder="Type a job" class="form-control">
+                    </fieldset>
+                </td>
+                <td><button ng-click="save()" class="btn btn-primary">Save</button></td>
+            </tr>
+        </tbody>
+    </table>
 </form>
