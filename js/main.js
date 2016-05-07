@@ -13,7 +13,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
         .state('team', {
             url: "/",
             templateUrl: "views/team.html",
-            controller: "deleteCtrl"
+            controller: "teamCtrl"
         })
         .state('new', {
             url: "/new",
@@ -63,19 +63,20 @@ app.factory('store', ['$rootScope', function ($rootScope) {
                 return all
             }, []);
 
+            //delivery newTeam
             return newTeam;
         },
         refresh: function(newTeam){
             this.team = newTeam;
             $rootScope.$broadcast('refresh');
         },
-        team:[]
+        team:null
     };
 
     return actions;
 }]);
 
-app.controller('deleteCtrl', ['$scope','store', function($scope, store){
+app.controller('teamCtrl', ['$scope','store', function($scope, store){
 
     //delete function
     $scope.delete = function(id){
@@ -179,7 +180,10 @@ app.controller('AppCtrl', ['$scope','store',function($scope, store) {
     }
 
     //loop for array path and get his reponses with promisses and Deferred
-    function request_data(){
+    function request_data(force){
+
+        //reset array
+        if(promisses.length>0) promisses.length=0;
 
         //put function in array
         promisses[0]=request(paths[0]);
@@ -197,7 +201,7 @@ app.controller('AppCtrl', ['$scope','store',function($scope, store) {
             //get a + b and crate a news array for delivery to AppCtrl
             var newTeam = data.names.reduce(function(all, item, index){
                 all.push({
-                    id: index,
+                    id: index+1,
                     name: data.names[index],
                     job: data.jobs[index]
                 });
@@ -210,6 +214,8 @@ app.controller('AppCtrl', ['$scope','store',function($scope, store) {
                 $scope.team = store.team;
             });
 
+            //force-update current controller
+            if(force) $scope.$digest();
         });
     }
 
@@ -221,5 +227,10 @@ app.controller('AppCtrl', ['$scope','store',function($scope, store) {
     $scope.$on('refresh', function(){
         $scope.team = store.team;
     });
+
+    //restore function
+    $scope.restore = function(event){
+        request_data(true);
+    }
 
 }]);

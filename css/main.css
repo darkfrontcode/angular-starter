@@ -8,16 +8,37 @@
         display: table;
     }
 
-    header a{
+    header a.title{
         text-align: center;
         display: block;
     }
 
-    header h2{
-        margin: 0 auto 10px auto;
+    header a.title h2{
+        margin: 0 auto 20px auto;
     }
 
-    header .add{
+    header nav.options{
+        margin: auto;
+        display: block;
+    }
+
+    header nav.options ul{
+        display: table;
+        margin: 0 auto;
+        padding: 0;
+        width: 300px;
+    }
+
+    header nav.options ul li{
+        width: 50%;
+        float: left;
+        list-style: none;
+    }
+
+    header nav.options ul li a{
+        width: 100%;
+        display: block;
+        text-align: center;
         text-decoration: underline;
     }
 

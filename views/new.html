@@ -1,3 +1,8 @@
+<header>
+    <a ui-sref="team" class="title">
+        <h2>Enterprise Team</h2>
+    </a>
+</header>
 <form>
     <table class="table table-striped">
         <thead>
@@ -6,6 +11,7 @@
                 <td><b>Name:</b></td>
                 <td><b>Job:</b></td>
                 <td><b>Save:</b></td>
+                <td><b>Cancel:</b></td>
             </tr>
         </thead>
         <tbody>
@@ -26,6 +32,7 @@
                     </fieldset>
                 </td>
                 <td><button ng-click="save()" class="btn btn-primary">Save</button></td>
+                <td><a ui-sref="team" class="btn btn-primary">Cancel</a></td>
             </tr>
         </tbody>
     </table>

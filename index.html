@@ -12,14 +12,6 @@
 <body>
 
     <div ng-app="app" ng-controller="AppCtrl">
-        <header>
-            <a href="index.html">
-                <h2>Enterprise Team</h2>
-            </a>
-            <div ng-if="team.length!=0">
-                <a ui-sref="new" class="add">Add new person <i class="glyphicon glyphicon-plus-sign" aria-hidden="true"></i></a>
-            </div>
-        </header>
         <div ui-view></div>
     </div>
 

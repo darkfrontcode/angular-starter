@@ -1,8 +1,33 @@
-<div ng-if="team.length==0">
+<header>
+    <a ui-sref="team" class="title">
+        <h2>Enterprise Team</h2>
+    </a>
+    <div ng-if="team!=null">
+        <nav class="options">
+            <ul>
+                <li>
+                    <a href ng-click="restore()">Restore from cloud <i class="glyphicon glyphicon-cloud" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                    <a ui-sref="new">Add new person <i class="glyphicon glyphicon-plus-sign" aria-hidden="true"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<div ng-if="team==null">
     <div class="loading">
         <div class="well well-sm">
             <i class="glyphicon glyphicon-cloud" aria-hidden="true"></i>
             <span>Carregado..</span>
+        </div>
+    </div>
+</div>
+<div ng-if="team.length==0">
+    <div class="loading">
+        <div class="well well-sm">
+            <i class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></i>
+            <span>No more data man. Stop clicking.</span>
         </div>
     </div>
 </div>
@@ -21,7 +46,7 @@
                 <td>{{person.name}}</td>
                 <td>{{person.job}}</td>
                 <td><a ui-sref="edit({id: person.id})"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i></a></td>
-                <td><a href="#" ng-click="delete(person.id)"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i></a></td>
+                <td><a href ng-click="delete(person.id)"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i></a></td>
             </tr>
         </tbody>
     </table>
