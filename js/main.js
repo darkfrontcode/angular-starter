@@ -148,7 +148,8 @@ app.controller('newCtrl', ['$scope', '$location', 'actions', function($scope, $l
 
     //get store
     var store = actions.state;
-
+    
+    //make new unique id
     if(store.length>0){
 
         //search last index of store
@@ -161,6 +162,7 @@ app.controller('newCtrl', ['$scope', '$location', 'actions', function($scope, $l
         var id = last_index.id+1;
 
     }else{
+        //new unique id
         var id = 1;
     }
 
