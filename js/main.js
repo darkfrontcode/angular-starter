@@ -98,7 +98,7 @@ app.factory('actions', ['$rootScope', function ($rootScope) {
             this.refresh();
         },
         refresh: function(){
-            $rootScope.$broadcast('refresh');
+            $rootScope.$emit('refresh');
         },
         state: []
     };
@@ -149,14 +149,22 @@ app.controller('newCtrl', ['$scope', '$location', 'actions', function($scope, $l
     //get store
     var store = actions.state;
 
-    //search last index of store
-    var last_index = store.reduce(function(all, item, index){
-        if(index==store.length-1) return item;
-        else return all;
-    }, []);
+    if(store.length>0){
 
-    //get last index and plus 1 for unique id
-    var id = last_index.id+1;
+        //search last index of store
+        var last_index = store.reduce(function(all, item, index){
+            if(index==store.length-1) return item;
+            else return all;
+        }, []);
+
+        //get last index and plus 1 for unique id
+        var id = last_index.id+1;
+
+    }else{
+        var id = 1;
+    }
+
+    //send new person model to $scope
     $scope.person = {id: id, name: "", job: ""}
 
     //save function
@@ -170,7 +178,7 @@ app.controller('newCtrl', ['$scope', '$location', 'actions', function($scope, $l
     }
 }]);
 
-app.controller('AppCtrl', ['$scope','actions', function($scope, actions) {
+app.controller('AppCtrl', ['$scope','actions','$rootScope',function($scope, actions, $rootScope) {
 
     //promisses arrays
     var promisses=[],
@@ -195,8 +203,8 @@ app.controller('AppCtrl', ['$scope','actions', function($scope, actions) {
         request_data(true);
     }
 
-    //refresh and broadcast data for controller
-    $scope.$on('refresh', function(){
+    //refresh
+    $rootScope.$on('refresh', function(){
         $scope.team = actions.state;
     });
 
@@ -255,6 +263,7 @@ app.controller('AppCtrl', ['$scope','actions', function($scope, actions) {
             actions.state = newTeam;
             $scope.team = actions.state;
 
+            //update controller $scope if necessary
             if(update) $scope.$digest();
         });
     }
