@@ -5,11 +5,12 @@
 var app = angular.module('app', ['ui.router']);
 
 //router config
-app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
+app.config(function($stateProvider, $urlRouterProvider) {
 
-    // $locationProvider.html5mode({ enabled: true, requireBase: false });
+    //prevent break links
     $urlRouterProvider.otherwise("/");
 
+    //routes
     $stateProvider
         .state('team', {
             url: "/",
@@ -31,9 +32,11 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
 app.factory('actions', ['$rootScope', function ($rootScope) {
     var actions = {
         getStore: function(){
+            //delivery localStorage
             return JSON.parse(localStorage.getItem("enterprise"));
         },
         saveStore(newStore){
+            //set new localStorage
             localStorage.setItem("enterprise", JSON.stringify(newStore));
         },
         add: function(person){
@@ -41,13 +44,13 @@ app.factory('actions', ['$rootScope', function ($rootScope) {
             //get store from localStorage
             var storage = this.getStore();
 
-            //clone store team for push purpose
+            //clone store
             var newTeam = storage.reduce(function(all, item, index){
                 all.push(item);
                 return all;
             }, []);
 
-            //push new person to clone array
+            //push new person to clone store
             newTeam.push(person);
 
             //set new array to localStorage
@@ -81,7 +84,7 @@ app.factory('actions', ['$rootScope', function ($rootScope) {
             //get store
             var storage = this.getStore();
 
-            //clone team without exlude person
+            //clone store and remove person id
             var newTeam = storage.reduce(function(all, item, index){
                 if(item.id!=id) all.push(item)
                 return all
@@ -106,10 +109,10 @@ app.factory('actions', ['$rootScope', function ($rootScope) {
 
 app.controller('teamCtrl', ['$scope','actions', function($scope, actions){
 
-    //delete action
+    //deleteHandleClick
     $scope.delete = function(id){
-        
-        //call delete action
+
+        //delete action
         actions.delete(id);
     }
 
@@ -126,13 +129,13 @@ app.controller('editCtrl', ['$scope', '$location', '$stateParams', 'actions', fu
         return all;
     }, {});
 
-    //add new person to scope
+    //add person to scope
     $scope.person = person;
 
     //save new person
     $scope.save = function(){
 
-        //get add action from actions.actions
+        //edit and save person
         actions.edit($scope.person);
 
         //redirect page to index
@@ -152,7 +155,7 @@ app.controller('newCtrl', ['$scope', '$location', 'actions', function($scope, $l
         else return all;
     }, []);
 
-    //get id and plus 1 for unique id
+    //get last index and plus 1 for unique id
     var id = last_index.id+1;
     $scope.person = {id: id, name: "", job: ""}
 
@@ -197,7 +200,7 @@ app.controller('AppCtrl', ['$scope','actions', function($scope, actions) {
         $scope.team = actions.state;
     });
 
-    //defferd function of jquery
+    //jquery Deferred
     function request(path){
         var dfrd = $.Deferred();
 
@@ -235,7 +238,7 @@ app.controller('AppCtrl', ['$scope','actions', function($scope, actions) {
             //organize array
             var data = {names: a.names, jobs: b.jobs};
 
-            //get a + b and crate a new array for delivery to AppCtrl
+            //get a + b and create a new array for delivery to AppCtrl
             var newTeam = data.names.reduce(function(all, item, index){
                 all.push({
                     id: index+1,
@@ -246,7 +249,7 @@ app.controller('AppCtrl', ['$scope','actions', function($scope, actions) {
             }, []);
 
             //create localStorage with delivered data
-            localStorage.setItem("enterprise", JSON.stringify(newTeam));
+            actions.saveStore(newTeam);
 
             //delivery data
             actions.state = newTeam;
